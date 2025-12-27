@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Requests - Campus Knowledge Assistant</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 min-h-screen flex text-slate-900">
+  <!-- Sidebar -->
+  <aside class="w-72 bg-white border-r border-slate-200 flex flex-col">
+    <!-- Sidebar Header -->
+    <div class="p-4 border-b border-slate-200">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center shadow-lg shadow-blue-600/20">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+          </svg>
+        </div>
+        <span class="font-semibold text-slate-800">InfoCenter AI</span>
+      </div>
+      <a href="index.html" class="w-full bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors shadow-sm mb-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+        </svg>
+        Back to Chat
+      </a>
+      <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors shadow-sm">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        New Request
+      </button>
+    </div>
+
+    <!-- Navigation Links -->
+    <div class="flex-1 overflow-y-auto p-3 space-y-1">
+      <a href="user_requests.html" class="flex items-center gap-3 px-3 py-2 bg-blue-50 text-blue-700 rounded-lg transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+        <span class="text-sm font-medium">My Requests</span>
+      </a>
+    </div>
+
+    <!-- User Menu -->
+    <div class="p-4 border-t border-slate-200">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center text-sm font-medium text-slate-600">
+          AC
+        </div>
+        <div class="flex-1">
+          <p class="text-sm font-medium text-slate-700">Alex Chen</p>
+          <p class="text-xs text-slate-500">ac123@e-uvt.ro</p>
+        </div>
+        <a href="login.html" class="text-slate-400 hover:text-slate-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="flex-1 flex flex-col bg-slate-50 p-8">
+    <div class="max-w-5xl mx-auto w-full">
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <h1 class="text-2xl font-bold text-slate-900">My Document Requests</h1>
+          <p class="text-slate-500 mt-1">Track the status of your official document requests</p>
+        </div>
+      </div>
+
+      <!-- Requests List -->
+      <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <table class="w-full text-left">
+          <thead class="bg-slate-50 border-b border-slate-200">
+            <tr>
+              <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Request ID</th>
+              <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Document Type</th>
+              <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Date Requested</th>
+              <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
+              <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200">
+            <tr class="hover:bg-slate-50 transition-colors">
+              <td class="px-6 py-4 text-sm font-medium text-slate-900">#REQ-2024-001</td>
+              <td class="px-6 py-4 text-sm text-slate-700">Academic Transcript (Official)</td>
+              <td class="px-6 py-4 text-sm text-slate-500">Dec 1, 2024</td>
+              <td class="px-6 py-4">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                  Processing
+                </span>
+              </td>
+              <td class="px-6 py-4 text-right">
+                <button class="text-slate-400 cursor-not-allowed" disabled>Download</button>
+              </td>
+            </tr>
+            <tr class="hover:bg-slate-50 transition-colors">
+              <td class="px-6 py-4 text-sm font-medium text-slate-900">#REQ-2024-002</td>
+              <td class="px-6 py-4 text-sm text-slate-700">Enrollment Verification Letter</td>
+              <td class="px-6 py-4 text-sm text-slate-500">Nov 28, 2024</td>
+              <td class="px-6 py-4">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  Ready
+                </span>
+              </td>
+              <td class="px-6 py-4 text-right">
+                <button class="text-blue-600 hover:text-blue-800 font-medium">Download PDF</button>
+              </td>
+            </tr>
+            <tr class="hover:bg-slate-50 transition-colors">
+              <td class="px-6 py-4 text-sm font-medium text-slate-900">#REQ-2024-003</td>
+              <td class="px-6 py-4 text-sm text-slate-700">Student ID Replacement</td>
+              <td class="px-6 py-4 text-sm text-slate-500">Nov 15, 2024</td>
+              <td class="px-6 py-4">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800">
+                  Completed
+                </span>
+              </td>
+              <td class="px-6 py-4 text-right">
+                <span class="text-slate-500 text-sm">Picked up</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
