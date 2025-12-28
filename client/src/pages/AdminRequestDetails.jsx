@@ -1,8 +1,14 @@
 import React from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 
 const AdminRequestDetails = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        localStorage.clear();
+        navigate('/login');
+    };
 
     return (
         <div className="bg-slate-50 min-h-screen text-slate-900">
@@ -32,11 +38,11 @@ const AdminRequestDetails = () => {
                         <div>
                             <p className="text-sm font-medium text-slate-700">Admin User</p>
                         </div>
-                        <Link to="/login" className="text-slate-400 hover:text-slate-600 ml-2 transition-colors">
+                        <button onClick={handleLogout} className="text-slate-400 hover:text-slate-600 ml-2 transition-colors">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                             </svg>
-                        </Link>
+                        </button>
                     </div>
                 </div>
             </nav>
