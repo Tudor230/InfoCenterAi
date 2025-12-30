@@ -64,6 +64,28 @@ public class RequestService {
         return mapToResponse(saved);
     }
 
+    public List<RequestResponse> getAllRequests() {
+        return requestRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
+    public RequestResponse getRequestByIdAdmin(Long id) {
+        Request request = requestRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Request not found"));
+        return mapToResponse(request);
+    }
+
+    public RequestResponse updateRequestStatus(Long id, RequestStatus status) {
+        Request request = requestRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Request not found"));
+
+        request.setStatus(status);
+        Request saved = requestRepository.save(request);
+        return mapToResponse(saved);
+    }
+
     private RequestResponse mapToResponse(Request request) {
         return new RequestResponse(
                 request.getId(),
@@ -73,7 +95,8 @@ public class RequestService {
                 request.getAdditionalNotes(),
                 request.getStatus(),
                 request.getCreatedAt(),
-                request.getUpdatedAt()
+                request.getUpdatedAt(),
+                request.getUser().getId()
         );
     }
 }

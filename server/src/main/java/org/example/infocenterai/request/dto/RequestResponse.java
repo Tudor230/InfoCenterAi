@@ -14,8 +14,9 @@ public class RequestResponse {
     private RequestStatus status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Integer userId;
 
-    public RequestResponse(Long id, String documentType, String purpose, DeliveryMethod deliveryMethod, String additionalNotes, RequestStatus status, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public RequestResponse(Long id, String documentType, String purpose, DeliveryMethod deliveryMethod, String additionalNotes, RequestStatus status, LocalDateTime createdAt, LocalDateTime updatedAt, Integer userId) {
         this.id = id;
         this.documentType = documentType;
         this.purpose = purpose;
@@ -24,6 +25,7 @@ public class RequestResponse {
         this.status = status;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.userId = userId;
     }
 
     public Long getId() {
@@ -89,5 +91,12 @@ public class RequestResponse {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
-}
 
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+}
