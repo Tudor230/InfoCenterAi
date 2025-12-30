@@ -1,15 +1,37 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
 
 const Chat = () => {
     const [conversations, setConversations] = useState([]);
     const [activeConversationId, setActiveConversationId] = useState(null);
+    const [messages, setMessages] = useState([]);
+    const [inputMessage, setInputMessage] = useState('');
+    const [isSending, setIsSending] = useState(false);
     const [loading, setLoading] = useState(true);
+
     const navigate = useNavigate();
+    const messagesEndRef = useRef(null);
 
     useEffect(() => {
         fetchConversations();
     }, []);
+
+    useEffect(() => {
+        if (activeConversationId) {
+            fetchMessages(activeConversationId);
+        } else {
+            setMessages([]);
+        }
+    }, [activeConversationId]);
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages, isSending]);
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
 
     const getAuthHeaders = () => {
         const token = localStorage.getItem('token');
@@ -44,6 +66,20 @@ const Chat = () => {
         }
     };
 
+    const fetchMessages = async (conversationId) => {
+        try {
+            const response = await fetch(`http://localhost:8080/api/chat/conversations/${conversationId}/messages`, {
+                headers: getAuthHeaders()
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setMessages(data);
+            }
+        } catch (error) {
+            console.error('Failed to fetch messages', error);
+        }
+    };
+
     const createConversation = async () => {
         try {
             const response = await fetch('http://localhost:8080/api/chat/conversations', {
@@ -73,6 +109,7 @@ const Chat = () => {
                 setConversations(conversations.filter(c => c.id !== id));
                 if (activeConversationId === id) {
                     setActiveConversationId(null);
+                    setMessages([]);
                 }
             }
         } catch (error) {
@@ -98,6 +135,44 @@ const Chat = () => {
             }
         } catch (error) {
             console.error('Failed to rename conversation', error);
+        }
+    };
+
+    const handleSendMessage = async (e) => {
+        e.preventDefault();
+        if (!inputMessage.trim() || !activeConversationId) return;
+
+        const currentMsg = inputMessage;
+        setInputMessage('');
+        setIsSending(true);
+
+        // Optimistically add user message
+        const tempUserMsg = {
+            id: Date.now(),
+            role: 'user',
+            content: currentMsg,
+            createdAt: new Date().toISOString()
+        };
+        setMessages(prev => [...prev, tempUserMsg]);
+
+        try {
+            const response = await fetch(`http://localhost:8080/api/chat/conversations/${activeConversationId}/messages`, {
+                method: 'POST',
+                headers: getAuthHeaders(),
+                body: JSON.stringify({ content: currentMsg })
+            });
+
+            if (response.ok) {
+                const assistantMsg = await response.json();
+                setMessages(prev => [...prev, assistantMsg]);
+            } else {
+                console.error('Failed to send message');
+                // Optionally remove the optimistic message here on failure
+            }
+        } catch (error) {
+            console.error('Error sending message', error);
+        } finally {
+            setIsSending(false);
         }
     };
 
@@ -205,10 +280,100 @@ const Chat = () => {
             {/* Main Chat Area */}
             <div className="flex flex-col flex-1 bg-white">
                 {activeConversationId ? (
-                    <div className="flex items-center justify-center flex-1 text-slate-400">
-                        {/* Chat messages will go here */}
-                        <p>Chat functionality coming soon...</p>
-                    </div>
+                    <>
+                        {/* Chat Header */}
+                        <header className="flex items-center justify-between px-6 py-4 bg-white border-b border-slate-200">
+                            <div>
+                                <h2 className="font-semibold text-slate-800">
+                                    {conversations.find(c => c.id === activeConversationId)?.title || 'Chat'}
+                                </h2>
+                                <p className="text-xs text-slate-500">InfoCenter AI • {messages.length} messages</p>
+                            </div>
+                        </header>
+
+                        {/* Messages Area */}
+                        <div className="flex-1 p-6 space-y-6 overflow-y-auto">
+                            {messages.map((msg) => (
+                                <div key={msg.id} className={`flex max-w-3xl gap-4 mx-auto ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
+                                    <div className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center text-sm font-medium ${msg.role === 'user' ? 'bg-slate-200 text-slate-600' : 'bg-blue-600 text-white shadow-md'
+                                        }`}>
+                                        {msg.role === 'user' ? (
+                                            localStorage.getItem('firstName')?.[0] || 'U'
+                                        ) : (
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+                                            </svg>
+                                        )}
+                                    </div>
+                                    <div className={`flex-1 ${msg.role === 'user' ? 'text-right' : ''}`}>
+                                        <div className={`flex items-center gap-2 mb-1 ${msg.role === 'user' ? 'justify-end' : ''}`}>
+                                            <span className="font-semibold text-slate-900">
+                                                {msg.role === 'user' ? localStorage.getItem('firstName') : 'InfoCenter AI'}
+                                            </span>
+                                            <span className="text-xs text-slate-500">
+                                                {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            </span>
+                                        </div>
+                                        <div className={`leading-relaxed text-slate-800 ${msg.role === 'assistant' ? 'prose prose-sm max-w-none' : 'whitespace-pre-wrap'}`}>
+                                            {msg.role === 'assistant' ? (
+                                                <ReactMarkdown>{msg.content}</ReactMarkdown>
+                                            ) : (
+                                                msg.content
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                            {isSending && (
+                                <div className="flex max-w-3xl gap-4 mx-auto opacity-50">
+                                    <div className="flex items-center justify-center w-8 h-8 bg-blue-600 rounded-full shadow-md shrink-0">
+                                        <svg className="w-5 h-5 text-white animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+                                        </svg>
+                                    </div>
+                                    <div className="flex-1">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <span className="font-semibold text-slate-900">InfoCenter AI</span>
+                                        </div>
+                                        <div className="italic text-slate-500">Thinking...</div>
+                                    </div>
+                                </div>
+                            )}
+                            <div ref={messagesEndRef} />
+                        </div>
+
+                        {/* Input Area */}
+                        <div className="p-6 bg-white border-t border-slate-200">
+                            <form onSubmit={handleSendMessage} className="relative max-w-3xl mx-auto">
+                                <textarea
+                                    value={inputMessage}
+                                    onChange={(e) => setInputMessage(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' && !e.shiftKey) {
+                                            e.preventDefault();
+                                            handleSendMessage(e);
+                                        }
+                                    }}
+                                    placeholder="Ask anything about campus policies, schedules, or services..."
+                                    className="w-full pl-4 pr-12 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white resize-none shadow-sm"
+                                    rows="1"
+                                    disabled={isSending}
+                                ></textarea>
+                                <button
+                                    type="submit"
+                                    disabled={!inputMessage.trim() || isSending}
+                                    className="absolute right-2 top-2 p-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                                    </svg>
+                                </button>
+                            </form>
+                            <p className="mt-3 text-xs text-center text-slate-400">
+                                InfoCenter AI can make mistakes. Please verify important information.
+                            </p>
+                        </div>
+                    </>
                 ) : (
                     <div className="flex flex-col items-center justify-center flex-1 text-slate-400">
                         <div className="flex items-center justify-center w-16 h-16 mb-4 rounded-full bg-slate-100">

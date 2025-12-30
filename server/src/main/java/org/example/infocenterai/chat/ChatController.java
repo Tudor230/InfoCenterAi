@@ -1,6 +1,8 @@
 package org.example.infocenterai.chat;
 
 import org.example.infocenterai.chat.dto.ConversationResponse;
+import org.example.infocenterai.chat.dto.MessageRequest;
+import org.example.infocenterai.chat.dto.MessageResponse;
 import org.example.infocenterai.chat.dto.RenameConversationRequest;
 import org.example.infocenterai.user.User;
 import org.springframework.http.ResponseEntity;
@@ -46,5 +48,21 @@ public class ChatController {
     ) {
         return ResponseEntity.ok(chatService.renameConversation(conversationId, request, user));
     }
-}
 
+    @GetMapping("/{conversationId}/messages")
+    public ResponseEntity<List<MessageResponse>> getMessages(
+            @PathVariable Long conversationId,
+            @AuthenticationPrincipal User user
+    ) {
+        return ResponseEntity.ok(chatService.getMessages(conversationId, user));
+    }
+
+    @PostMapping("/{conversationId}/messages")
+    public ResponseEntity<MessageResponse> sendMessage(
+            @PathVariable Long conversationId,
+            @RequestBody MessageRequest request,
+            @AuthenticationPrincipal User user
+    ) {
+        return ResponseEntity.ok(chatService.sendMessage(conversationId, request, user));
+    }
+}
