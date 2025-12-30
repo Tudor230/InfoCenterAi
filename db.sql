@@ -28,4 +28,19 @@ CREATE TABLE messages (
         ON DELETE CASCADE 
 );
 
-CREATE INDEX idx_messages_conversation_id ON messages(conversation_id);
+CREATE TABLE requests (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    document_type VARCHAR(255) NOT NULL,
+    purpose VARCHAR(255) NOT NULL,
+    delivery_method VARCHAR(50) NOT NULL, -- Stores 'DIGITAL_DOWNLOAD' or 'IN_PERSON'
+    additional_notes TEXT,
+    status VARCHAR(50) DEFAULT 'PENDING', -- 'PENDING', 'PROCESSING', 'COMPLETED', 'REJECTED'
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    
+    CONSTRAINT fk_user 
+        FOREIGN KEY (user_id) 
+        REFERENCES users(id) 
+        ON DELETE CASCADE
+);
