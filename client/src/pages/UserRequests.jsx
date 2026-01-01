@@ -97,6 +97,31 @@ const UserRequests = () => {
         }
     };
 
+    const handleDownload = async (fileId, fileName) => {
+        try {
+            const response = await fetch(`http://localhost:8080/api/drive/download/${fileId}`, {
+                headers: getAuthHeaders()
+            });
+
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName || 'document.pdf';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            } else {
+                alert('Failed to download file');
+            }
+        } catch (error) {
+            console.error('Error downloading file:', error);
+            alert('An error occurred while downloading the file');
+        }
+    };
+
     const handleLogout = () => {
         localStorage.clear();
         navigate('/login');
@@ -220,8 +245,13 @@ const UserRequests = () => {
                                                             Cancel
                                                         </button>
                                                     )}
-                                                    {req.status === 'COMPLETED' && req.deliveryMethod === 'DIGITAL_DOWNLOAD' ? (
-                                                        <button className="text-sm font-medium text-blue-600 hover:text-blue-800">Download</button>
+                                                    {req.status === 'COMPLETED' && req.driveFileId ? (
+                                                        <button
+                                                            onClick={() => handleDownload(req.driveFileId, `${req.documentType}.pdf`)}
+                                                            className="text-sm font-medium text-blue-600 hover:text-blue-800"
+                                                        >
+                                                            Download
+                                                        </button>
                                                     ) : (
                                                         <span className="text-sm font-medium cursor-not-allowed text-slate-400">Download</span>
                                                     )}

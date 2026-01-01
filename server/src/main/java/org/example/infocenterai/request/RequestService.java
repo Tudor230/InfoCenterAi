@@ -96,7 +96,8 @@ public class RequestService {
                 request.getStatus(),
                 request.getCreatedAt(),
                 request.getUpdatedAt(),
-                request.getUser().getId()
+                request.getUser().getId(),
+                request.getDriveFileId()
         );
     }
 }

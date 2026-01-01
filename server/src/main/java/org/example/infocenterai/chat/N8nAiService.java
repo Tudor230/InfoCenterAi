@@ -33,7 +33,6 @@ public class N8nAiService implements AiService {
         HttpEntity<Map<String, String>> request = new HttpEntity<>(body, headers);
 
         try {
-            // We expect a Map in response since the user said "json with a field named output"
             Map response = restTemplate.postForObject(url, request, Map.class);
 
             if (response != null && response.containsKey("output")) {

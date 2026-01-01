@@ -40,6 +40,9 @@ public class Request {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "drive_file_id")
+    private String driveFileId;
+
     public Request() {
     }
 
@@ -142,5 +145,12 @@ public class Request {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
-}
 
+    public String getDriveFileId() {
+        return driveFileId;
+    }
+
+    public void setDriveFileId(String driveFileId) {
+        this.driveFileId = driveFileId;
+    }
+}

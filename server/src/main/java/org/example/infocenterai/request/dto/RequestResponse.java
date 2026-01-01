@@ -15,8 +15,9 @@ public class RequestResponse {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Integer userId;
+    private String driveFileId;
 
-    public RequestResponse(Long id, String documentType, String purpose, DeliveryMethod deliveryMethod, String additionalNotes, RequestStatus status, LocalDateTime createdAt, LocalDateTime updatedAt, Integer userId) {
+    public RequestResponse(Long id, String documentType, String purpose, DeliveryMethod deliveryMethod, String additionalNotes, RequestStatus status, LocalDateTime createdAt, LocalDateTime updatedAt, Integer userId, String driveFileId) {
         this.id = id;
         this.documentType = documentType;
         this.purpose = purpose;
@@ -26,6 +27,7 @@ public class RequestResponse {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.userId = userId;
+        this.driveFileId = driveFileId;
     }
 
     public Long getId() {
@@ -98,5 +100,13 @@ public class RequestResponse {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+
+    public String getDriveFileId() {
+        return driveFileId;
+    }
+
+    public void setDriveFileId(String driveFileId) {
+        this.driveFileId = driveFileId;
     }
 }

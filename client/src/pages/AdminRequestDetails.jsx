@@ -7,6 +7,10 @@ const AdminRequestDetails = () => {
     const [request, setRequest] = useState(null);
     const [loading, setLoading] = useState(true);
     const [updating, setUpdating] = useState(false);
+    const [showRejectAction, setShowRejectAction] = useState(false);
+    const [showCompleteAction, setShowCompleteAction] = useState(false);
+    const [rejectionReason, setRejectionReason] = useState('');
+    const [selectedFile, setSelectedFile] = useState(null);
 
     useEffect(() => {
         fetchRequestDetails();
@@ -60,6 +64,90 @@ const AdminRequestDetails = () => {
             }
         } catch (error) {
             console.error('Failed to fetch user details', error);
+        }
+    };
+
+    const handleReject = async () => {
+        if (!rejectionReason.trim()) {
+            alert('Please provide a reason for rejection');
+            return;
+        }
+        setUpdating(true);
+        try {
+            const response = await fetch(`http://localhost:8080/api/admin/requests/${id}/status?status=REJECTED`, {
+                method: 'PATCH',
+                headers: getAuthHeaders(),
+                body: JSON.stringify({ reason: rejectionReason })
+            });
+
+            if (response.ok) {
+                const updatedRequest = await response.json();
+                setRequest(updatedRequest);
+                setShowRejectAction(false);
+                setRejectionReason('');
+            } else {
+                alert('Failed to reject request');
+            }
+        } catch (error) {
+            console.error('Error rejecting request:', error);
+            alert('An error occurred while rejecting the request');
+        } finally {
+            setUpdating(false);
+        }
+    };
+
+    const handleComplete = async () => {
+        if (!selectedFile) {
+            alert('Please select a file to upload');
+            return;
+        }
+
+        if (selectedFile.type !== 'application/pdf') {
+            alert('Only PDF files are allowed');
+            return;
+        }
+
+        setUpdating(true);
+        try {
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+            formData.append('folderId', '1eL_efNwFKxitnrLE1RauU23dwBjNOilh');
+            formData.append('requestId', id);
+
+            // Upload file
+            const uploadResponse = await fetch(`http://localhost:8080/api/drive/upload`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: formData
+            });
+
+            if (uploadResponse.ok) {
+                const fileData = await uploadResponse.text();
+
+                // Update request status with file info
+                const updateResponse = await fetch(`http://localhost:8080/api/admin/requests/${id}/status?status=COMPLETED`, {
+                    method: 'PATCH',
+                    headers: getAuthHeaders()
+                });
+
+                if (updateResponse.ok) {
+                    const updatedRequest = await updateResponse.json();
+                    setRequest(updatedRequest);
+                    setShowCompleteAction(false);
+                    setSelectedFile(null);
+                } else {
+                    alert('Failed to complete request');
+                }
+            } else {
+                alert('Failed to upload file');
+            }
+        } catch (error) {
+            console.error('Error completing request:', error);
+            alert('An error occurred while completing the request');
+        } finally {
+            setUpdating(false);
         }
     };
 
@@ -238,20 +326,87 @@ const AdminRequestDetails = () => {
                                 )}
                                 {request.status !== 'COMPLETED' && request.status !== 'REJECTED' && request.status !== 'CANCELLED' && (
                                     <>
-                                        <button
-                                            onClick={() => handleStatusUpdate('COMPLETED')}
-                                            disabled={updating}
-                                            className="w-full px-4 py-2 font-medium text-white transition-colors bg-green-600 rounded-lg hover:bg-green-700 disabled:opacity-50"
-                                        >
-                                            Complete Request
-                                        </button>
-                                        <button
-                                            onClick={() => handleStatusUpdate('REJECTED')}
-                                            disabled={updating}
-                                            className="w-full px-4 py-2 font-medium text-red-700 transition-colors rounded-lg bg-red-50 hover:bg-red-100 disabled:opacity-50"
-                                        >
-                                            Reject Request
-                                        </button>
+                                        {!showCompleteAction && !showRejectAction && (
+                                            <>
+                                                <button
+                                                    onClick={() => setShowCompleteAction(true)}
+                                                    disabled={updating}
+                                                    className="w-full px-4 py-2 font-medium text-white transition-colors bg-green-600 rounded-lg hover:bg-green-700 disabled:opacity-50"
+                                                >
+                                                    Complete Request
+                                                </button>
+                                                <button
+                                                    onClick={() => setShowRejectAction(true)}
+                                                    disabled={updating}
+                                                    className="w-full px-4 py-2 font-medium text-red-700 transition-colors rounded-lg bg-red-50 hover:bg-red-100 disabled:opacity-50"
+                                                >
+                                                    Reject Request
+                                                </button>
+                                            </>
+                                        )}
+
+                                        {showCompleteAction && (
+                                            <div className="p-4 border rounded-lg bg-slate-50 border-slate-200">
+                                                <h3 className="mb-2 text-sm font-medium text-slate-900">Upload Document</h3>
+                                                <input
+                                                    type="file"
+                                                    accept="application/pdf"
+                                                    onChange={(e) => setSelectedFile(e.target.files[0])}
+                                                    className="w-full mb-3 text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                                />
+                                                <div className="flex gap-2">
+                                                    <button
+                                                        onClick={handleComplete}
+                                                        disabled={updating || !selectedFile}
+                                                        className="flex-1 px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 disabled:opacity-50"
+                                                    >
+                                                        Complete
+                                                    </button>
+                                                    <button
+                                                        onClick={() => {
+                                                            setShowCompleteAction(false);
+                                                            setSelectedFile(null);
+                                                        }}
+                                                        disabled={updating}
+                                                        className="px-3 py-2 text-sm font-medium bg-white border rounded-lg text-slate-600 border-slate-300 hover:bg-slate-50"
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {showRejectAction && (
+                                            <div className="p-4 border rounded-lg bg-slate-50 border-slate-200">
+                                                <h3 className="mb-2 text-sm font-medium text-slate-900">Reason for Rejection</h3>
+                                                <textarea
+                                                    value={rejectionReason}
+                                                    onChange={(e) => setRejectionReason(e.target.value)}
+                                                    placeholder="Enter reason..."
+                                                    className="w-full p-2 mb-3 text-sm border rounded-lg border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                    rows="3"
+                                                />
+                                                <div className="flex gap-2">
+                                                    <button
+                                                        onClick={handleReject}
+                                                        disabled={updating || !rejectionReason.trim()}
+                                                        className="flex-1 px-3 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50"
+                                                    >
+                                                        Reject
+                                                    </button>
+                                                    <button
+                                                        onClick={() => {
+                                                            setShowRejectAction(false);
+                                                            setRejectionReason('');
+                                                        }}
+                                                        disabled={updating}
+                                                        className="px-3 py-2 text-sm font-medium bg-white border rounded-lg text-slate-600 border-slate-300 hover:bg-slate-50"
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
                                     </>
                                 )}
                                 {(request.status === 'COMPLETED' || request.status === 'REJECTED' || request.status === 'CANCELLED') && (
