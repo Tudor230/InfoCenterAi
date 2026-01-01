@@ -5,14 +5,16 @@ public class AuthenticationResponse {
     private String token;
     private String firstName;
     private String lastName;
+    private String role;
 
     public AuthenticationResponse() {
     }
 
-    public AuthenticationResponse(String token, String firstName, String lastName) {
+    public AuthenticationResponse(String token, String firstName, String lastName, String role) {
         this.token = token;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.role = role;
     }
 
     public String getToken() {
@@ -37,5 +39,13 @@ public class AuthenticationResponse {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

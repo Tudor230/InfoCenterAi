@@ -1,9 +1,11 @@
 package org.example.infocenterai.chat;
 
+import org.example.infocenterai.admin.dto.AdminConversationResponse;
 import org.example.infocenterai.chat.dto.ConversationResponse;
 import org.example.infocenterai.chat.dto.MessageRequest;
 import org.example.infocenterai.chat.dto.MessageResponse;
 import org.example.infocenterai.chat.dto.RenameConversationRequest;
+import org.example.infocenterai.user.Role;
 import org.example.infocenterai.user.User;
 import org.springframework.stereotype.Service;
 
@@ -64,7 +66,7 @@ public class ChatService {
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new RuntimeException("Conversation not found"));
 
-        if (!conversation.getUser().getId().equals(user.getId())) {
+        if (!conversation.getUser().getId().equals(user.getId()) && user.getRole() != Role.ADMIN) {
             throw new RuntimeException("Unauthorized");
         }
 
@@ -86,6 +88,10 @@ public class ChatService {
         Message userMessage = new Message(request.getContent(), "user", conversation);
         messageRepository.save(userMessage);
 
+        // Update conversation timestamp
+        conversation.setUpdatedAt(java.time.LocalDateTime.now());
+        conversationRepository.save(conversation);
+
         // AI Logic
         String aiResponseContent = aiService.generateResponse(request.getContent());
 
@@ -94,5 +100,23 @@ public class ChatService {
         Message savedAiMessage = messageRepository.save(aiMessage);
 
         return new MessageResponse(savedAiMessage.getId(), savedAiMessage.getRole(), savedAiMessage.getContent(), savedAiMessage.getCreatedAt());
+    }
+
+    public List<AdminConversationResponse> getAllConversationsForAdmin() {
+        return conversationRepository.findAll()
+                .stream()
+                .map(c -> new AdminConversationResponse(
+                        c.getId(),
+                        c.getTitle(),
+                        c.getCreatedAt(),
+                        c.getUpdatedAt(),
+                        c.getMessages() != null ? c.getMessages().size() : 0,
+                        new AdminConversationResponse.AdminUserResponse(
+                                c.getUser().getFirstName(),
+                                c.getUser().getLastName(),
+                                c.getUser().getEmail()
+                        )
+                ))
+                .collect(Collectors.toList());
     }
 }

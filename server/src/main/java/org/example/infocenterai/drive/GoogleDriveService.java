@@ -12,6 +12,8 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
+import com.google.api.services.drive.model.FileList;
+import org.example.infocenterai.drive.dto.DriveFileResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,7 +43,7 @@ public class GoogleDriveService {
     private String tokensDirectoryPath;
 
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
-    private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE_FILE);
+    private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE);
 
     public Drive getDriveService() throws IOException, GeneralSecurityException {
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
@@ -93,5 +99,35 @@ public class GoogleDriveService {
     public void downloadFile(String fileId, OutputStream outputStream) throws IOException, GeneralSecurityException {
         Drive service = getDriveService();
         service.files().get(fileId).executeMediaAndDownloadTo(outputStream);
+    }
+
+    public List<DriveFileResponse> listFiles(String folderId) throws IOException, GeneralSecurityException {
+        Drive service = getDriveService();
+        String query = "'" + folderId + "' in parents and trashed = false";
+
+        FileList result = service.files().list()
+                .setQ(query).setFields("nextPageToken, files(id, name, size, createdTime, webViewLink)")
+                .execute();
+
+        List<DriveFileResponse> files = new ArrayList<>();
+        if (result.getFiles() != null) {
+            for (com.google.api.services.drive.model.File file : result.getFiles()) {
+                LocalDateTime createdTime = null;
+                if (file.getCreatedTime() != null) {
+                    createdTime = LocalDateTime.ofInstant(
+                            Instant.ofEpochMilli(file.getCreatedTime().getValue()),
+                            ZoneId.systemDefault());
+                }
+
+                files.add(new DriveFileResponse(
+                        file.getId(),
+                        file.getName(),
+                        file.getSize(),
+                        createdTime,
+                        file.getWebViewLink()
+                ));
+            }
+        }
+        return files;
     }
 }

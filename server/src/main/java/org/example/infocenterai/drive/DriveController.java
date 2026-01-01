@@ -4,6 +4,7 @@ import com.google.api.services.drive.model.File;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.infocenterai.request.Request;
 import org.example.infocenterai.request.RequestRepository;
+import org.example.infocenterai.drive.dto.DriveFileResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/drive")
@@ -62,5 +64,16 @@ public class DriveController {
 
         // 3. Stream the file content directly to the response output stream
         googleDriveService.downloadFile(fileId, response.getOutputStream());
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<List<DriveFileResponse>> listFiles(@RequestParam("folderId") String folderId) {
+        try {
+            List<DriveFileResponse> files = googleDriveService.listFiles(folderId);
+            return ResponseEntity.ok(files);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }

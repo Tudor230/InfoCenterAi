@@ -27,6 +27,9 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse register(RegisterRequest request) {
+        if (repository.findByEmail(request.getEmail()).isPresent()) {
+            throw new RuntimeException("Email already exists");
+        }
         var user = new User();
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
@@ -37,7 +40,7 @@ public class AuthenticationService {
         Map<String, Object> extraClaims = new HashMap<>();
         extraClaims.put("role", user.getRole());
         var jwtToken = jwtService.generateToken(extraClaims, user);
-        return new AuthenticationResponse(jwtToken, user.getFirstName(), user.getLastName());
+        return new AuthenticationResponse(jwtToken, user.getFirstName(), user.getLastName(), user.getRole().name());
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
@@ -52,6 +55,6 @@ public class AuthenticationService {
         Map<String, Object> extraClaims = new HashMap<>();
         extraClaims.put("role", user.getRole());
         var jwtToken = jwtService.generateToken(extraClaims, user);
-        return new AuthenticationResponse(jwtToken, user.getFirstName(), user.getLastName());
+        return new AuthenticationResponse(jwtToken, user.getFirstName(), user.getLastName(), user.getRole().name());
     }
 }

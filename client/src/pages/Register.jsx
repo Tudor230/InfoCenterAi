@@ -12,8 +12,13 @@ const Register = () => {
 
     useEffect(() => {
         const token = localStorage.getItem('token');
+        const role = localStorage.getItem('role');
         if (token) {
-            navigate('/');
+            if (role === 'ADMIN') {
+                navigate('/admin');
+            } else {
+                navigate('/');
+            }
         }
     }, [navigate]);
 
@@ -55,16 +60,21 @@ const Register = () => {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.message || 'Registration failed');
+                throw new Error(data.error);
             }
 
             // Save token and user details
             localStorage.setItem('token', data.token);
             localStorage.setItem('firstName', data.firstName);
             localStorage.setItem('lastName', data.lastName);
+            localStorage.setItem('role', data.role);
 
-            // Navigate to home/chat
-            navigate('/');
+            // Navigate based on role
+            if (data.role === 'ADMIN') {
+                navigate('/admin');
+            } else {
+                navigate('/');
+            }
         } catch (err) {
             setError(err.message);
         }

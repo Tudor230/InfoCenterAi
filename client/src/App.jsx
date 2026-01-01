@@ -27,6 +27,7 @@ function App() {
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin/requests" element={<AdminRequests />} />
         <Route path="/admin/requests/:id" element={<AdminRequestDetails />} />
+        <Route path="/admin/chat/:conversationId" element={<Chat />} />
       </Route>
     </Routes>
   );
