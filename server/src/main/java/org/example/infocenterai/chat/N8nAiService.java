@@ -22,7 +22,7 @@ public class N8nAiService implements AiService {
 
     @Override
     public String generateResponse(String userMessage) {
-        String url = "https://n8n-service-scmr.onrender.com/webhook-test/message";
+        String url = "https://n8n-service-scmr.onrender.com/webhook/message";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
