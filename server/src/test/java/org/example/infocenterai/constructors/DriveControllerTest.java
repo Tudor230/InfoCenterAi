@@ -8,7 +8,6 @@ class DriveControllerTest {
 
     @Test
     void testConstructor() {
-        // DriveController uses field injection (@Autowired), so we just test the default constructor
         DriveController controller = new DriveController();
         assertNotNull(controller);
     }
