@@ -5,6 +5,9 @@ import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInsta
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.auth.oauth2.UserCredentials;
+import com.google.auth.http.HttpCredentialsAdapter;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
@@ -36,36 +39,39 @@ public class GoogleDriveService {
     @Value("${google.drive.application-name}")
     private String applicationName;
 
-    @Value("${google.drive.credentials-file-path}")
-    private String credentialsFilePath;
+    @Value("${GOOGLE_CREDENTIALS_BASE64}")
+    private String credentialsBase64;
 
-    @Value("${google.drive.tokens-directory-path}")
-    private String tokensDirectoryPath;
+    @Value("${GOOGLE_REFRESH_TOKEN}")
+    private String refreshToken;
 
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
     private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE);
 
     public Drive getDriveService() throws IOException, GeneralSecurityException {
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+        final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 
-        // Load client secrets.
-        InputStream in = GoogleDriveService.class.getResourceAsStream("/" + credentialsFilePath);
-        if (in == null) {
-            throw new FileNotFoundException("Resource not found: " + credentialsFilePath);
-        }
-        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
+        // 1. Decode your Base64 credentials.json
+        byte[] decodedJson = java.util.Base64.getDecoder().decode(credentialsBase64);
 
-        // Build flow and trigger user authorization request.
-        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-                HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
-                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(tokensDirectoryPath)))
-                .setAccessType("offline")
+        // 2. Load the Client Secrets from the decoded JSON
+        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(
+                JSON_FACTORY,
+                new java.io.InputStreamReader(new java.io.ByteArrayInputStream(decodedJson))
+        );
+
+        // 3. Build the modern UserCredentials (the replacement for GoogleCredential)
+        // We get the ID and Secret from the JSON and manually add the Refresh Token
+        GoogleCredentials credentials = UserCredentials.newBuilder()
+                .setClientId(clientSecrets.getDetails().getClientId())
+                .setClientSecret(clientSecrets.getDetails().getClientSecret())
+                .setRefreshToken(refreshToken)
                 .build();
-        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
-        Credential credential = new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
 
-        return new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
-                .setApplicationName(applicationName)
+        // 4. Use HttpCredentialsAdapter to bridge to the Drive Builder
+        return new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, new HttpCredentialsAdapter(credentials))
+                .setApplicationName("InfoCenterAi")
                 .build();
     }
 

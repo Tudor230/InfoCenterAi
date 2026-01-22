@@ -1,6 +1,18 @@
+# Ignore local build artifacts
 target/
-.git/
+*.jar
+
+# Ignore IDE settings
 .idea/
 *.iml
-.mvn/
-help.md
+.vscode/
+
+# Ignore local secrets files (CRITICAL)
+.env
+credentials.json
+tokens/
+*.key
+
+# Ignore git history (makes the upload to Docker daemon faster)
+.git/
+.gitignore
