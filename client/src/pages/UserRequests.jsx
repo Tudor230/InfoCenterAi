@@ -216,7 +216,7 @@ const UserRequests = () => {
             </div>
 
             {/* Main Content Area */}
-            <main className="flex flex-col flex-1 p-4 pt-12 overflow-y-auto sm:p-8 sm:pt-8 bg-slate-50">
+            <main className="flex flex-col flex-1 p-4 overflow-y-auto pt-14 sm:p-8 sm:pt-8 bg-slate-50">
                 <div className="w-full max-w-lg mx-auto sm:max-w-5xl">
                     <div className="flex flex-col gap-2 mb-5 sm:flex-row sm:items-center sm:justify-between">
                         <div>

@@ -433,7 +433,7 @@ const Chat = () => {
                                                 </span>
                                             </div>
                                             <div
-                                                className={`leading-relaxed text-slate-800 inline-block mx-auto sm:mx-0 max-w-[85%] sm:max-w-none ${msg.role === 'assistant' ? 'prose prose-sm max-w-none' : 'whitespace-pre-wrap'} ${isUser ? 'bg-slate-50' : ''} rounded-xl px-4 py-2 sm:bg-transparent sm:px-0 sm:py-0`}
+                                                className={`leading-relaxed text-slate-800 inline-block mx-auto sm:mx-0 sm:max-w-none ${msg.role === 'assistant' ? 'prose prose-sm max-w-none' : 'whitespace-pre-wrap'} ${isUser ? 'bg-slate-50' : ''} rounded-xl px-4 py-2 sm:bg-transparent sm:px-0 sm:py-0`}
                                             >
                                                 {msg.role === 'assistant' ? (
                                                     <ReactMarkdown>{msg.content}</ReactMarkdown>
