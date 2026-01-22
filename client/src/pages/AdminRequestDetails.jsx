@@ -26,7 +26,7 @@ const AdminRequestDetails = () => {
 
     const fetchRequestDetails = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/api/admin/requests/${id}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/requests/${id}`, {
                 headers: getAuthHeaders()
             });
             if (response.status === 401 || response.status === 403) {
@@ -55,7 +55,7 @@ const AdminRequestDetails = () => {
 
     const fetchUserDetails = async (userId) => {
         try {
-            const response = await fetch(`http://localhost:8080/api/admin/users/${userId}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/users/${userId}`, {
                 headers: getAuthHeaders()
             });
             if (response.ok) {
@@ -74,7 +74,7 @@ const AdminRequestDetails = () => {
         }
         setUpdating(true);
         try {
-            const response = await fetch(`http://localhost:8080/api/admin/requests/${id}/status?status=REJECTED`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/requests/${id}/status?status=REJECTED`, {
                 method: 'PATCH',
                 headers: getAuthHeaders(),
                 body: JSON.stringify({ reason: rejectionReason })
@@ -111,11 +111,11 @@ const AdminRequestDetails = () => {
         try {
             const formData = new FormData();
             formData.append('file', selectedFile);
-            formData.append('folderId', '1eL_efNwFKxitnrLE1RauU23dwBjNOilh');
+            formData.append('folderId', import.meta.env.VITE_DRIVE_REQUESTS_FOLDER_ID);
             formData.append('requestId', id);
 
             // Upload file
-            const uploadResponse = await fetch(`http://localhost:8080/api/drive/upload`, {
+            const uploadResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/drive/upload`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -127,7 +127,7 @@ const AdminRequestDetails = () => {
                 const fileData = await uploadResponse.text();
 
                 // Update request status with file info
-                const updateResponse = await fetch(`http://localhost:8080/api/admin/requests/${id}/status?status=COMPLETED`, {
+                const updateResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/requests/${id}/status?status=COMPLETED`, {
                     method: 'PATCH',
                     headers: getAuthHeaders()
                 });
@@ -156,7 +156,7 @@ const AdminRequestDetails = () => {
 
         setUpdating(true);
         try {
-            const response = await fetch(`http://localhost:8080/api/admin/requests/${id}/status?status=${newStatus}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/requests/${id}/status?status=${newStatus}`, {
                 method: 'PATCH',
                 headers: getAuthHeaders()
             });

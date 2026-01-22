@@ -7,7 +7,7 @@ const AdminDashboard = () => {
     const [inquiries, setInquiries] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [uploading, setUploading] = useState(false);
-    const KNOWLEDGE_BASE_FOLDER_ID = '1lN6l3-wkUDJT6P1j5ZDAn0Ikf1y9n_r6';
+    const KNOWLEDGE_BASE_FOLDER_ID = import.meta.env.VITE_DRIVE_KNOWLEDGE_BASE_FOLDER_ID;
 
     useEffect(() => {
         fetchFiles();
@@ -23,7 +23,7 @@ const AdminDashboard = () => {
 
     const fetchInquiries = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/admin/conversations', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/conversations`, {
                 headers: getAuthHeaders()
             });
             if (response.ok) {
@@ -37,7 +37,7 @@ const AdminDashboard = () => {
 
     const fetchFiles = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/api/drive/list?folderId=${KNOWLEDGE_BASE_FOLDER_ID}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/drive/list?folderId=${KNOWLEDGE_BASE_FOLDER_ID}`, {
                 headers: getAuthHeaders()
             });
             if (response.ok) {
@@ -65,7 +65,7 @@ const AdminDashboard = () => {
             formData.append('file', file);
             formData.append('folderId', KNOWLEDGE_BASE_FOLDER_ID);
 
-            const response = await fetch('http://localhost:8080/api/drive/upload', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/drive/upload`, {
                 method: 'POST',
                 headers: getAuthHeaders(),
                 body: formData

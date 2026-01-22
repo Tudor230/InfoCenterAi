@@ -23,7 +23,7 @@ const AdminRequests = () => {
 
     const fetchRequests = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/admin/requests', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/requests`, {
                 headers: getAuthHeaders()
             });
             if (response.status === 401 || response.status === 403) {
@@ -53,7 +53,7 @@ const AdminRequests = () => {
         const newUsersMap = {};
         await Promise.all(userIds.map(async (id) => {
             try {
-                const res = await fetch(`http://localhost:8080/api/admin/users/${id}`, {
+                const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/users/${id}`, {
                     headers: getAuthHeaders()
                 });
                 if (res.ok) {

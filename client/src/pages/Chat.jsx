@@ -56,7 +56,7 @@ const Chat = () => {
 
     const fetchConversations = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/chat/conversations', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/chat/conversations`, {
                 headers: getAuthHeaders()
             });
 
@@ -81,7 +81,7 @@ const Chat = () => {
 
     const fetchMessages = async (conversationId) => {
         try {
-            const response = await fetch(`http://localhost:8080/api/chat/conversations/${conversationId}/messages`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/chat/conversations/${conversationId}/messages`, {
                 headers: getAuthHeaders()
             });
             if (response.ok) {
@@ -95,7 +95,7 @@ const Chat = () => {
 
     const createConversation = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/chat/conversations', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/chat/conversations`, {
                 method: 'POST',
                 headers: getAuthHeaders()
             });
@@ -114,7 +114,7 @@ const Chat = () => {
         if (!window.confirm('Are you sure you want to delete this chat?')) return;
 
         try {
-            const response = await fetch(`http://localhost:8080/api/chat/conversations/${id}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/chat/conversations/${id}`, {
                 method: 'DELETE',
                 headers: getAuthHeaders()
             });
@@ -136,7 +136,7 @@ const Chat = () => {
         if (!newTitle || newTitle === currentTitle) return;
 
         try {
-            const response = await fetch(`http://localhost:8080/api/chat/conversations/${id}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/chat/conversations/${id}`, {
                 method: 'PATCH',
                 headers: getAuthHeaders(),
                 body: JSON.stringify({ title: newTitle })
@@ -169,7 +169,7 @@ const Chat = () => {
         setMessages(prev => [...prev, tempUserMsg]);
 
         try {
-            const response = await fetch(`http://localhost:8080/api/chat/conversations/${activeConversationId}/messages`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/chat/conversations/${activeConversationId}/messages`, {
                 method: 'POST',
                 headers: getAuthHeaders(),
                 body: JSON.stringify({ content: currentMsg })

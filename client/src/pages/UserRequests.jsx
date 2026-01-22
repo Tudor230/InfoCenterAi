@@ -27,7 +27,7 @@ const UserRequests = () => {
 
     const fetchRequests = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/requests', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/requests`, {
                 headers: getAuthHeaders()
             });
             if (response.status === 401) {
@@ -56,7 +56,7 @@ const UserRequests = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('http://localhost:8080/api/requests', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/requests`, {
                 method: 'POST',
                 headers: getAuthHeaders(),
                 body: JSON.stringify(formData)
@@ -82,7 +82,7 @@ const UserRequests = () => {
         if (!window.confirm('Are you sure you want to cancel this request?')) return;
 
         try {
-            const response = await fetch(`http://localhost:8080/api/requests/${id}/cancel`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/requests/${id}/cancel`, {
                 method: 'PATCH',
                 headers: getAuthHeaders()
             });
@@ -99,7 +99,7 @@ const UserRequests = () => {
 
     const handleDownload = async (fileId, fileName) => {
         try {
-            const response = await fetch(`http://localhost:8080/api/drive/download/${fileId}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/drive/download/${fileId}`, {
                 headers: getAuthHeaders()
             });
 
