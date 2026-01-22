@@ -102,8 +102,8 @@ const Register = () => {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-slate-50">
-            <div className="w-full max-w-md p-8 bg-white border shadow-2xl backdrop-blur rounded-2xl border-slate-200">
+        <div className="flex items-center justify-center min-h-screen px-4 bg-slate-50">
+            <div className="w-full max-w-md p-6 sm:p-8 bg-white border shadow-2xl backdrop-blur rounded-2xl border-slate-200">
                 {/* Logo / Title */}
                 <div className="mb-8 text-center">
                     <div className="inline-flex items-center justify-center w-16 h-16 mb-4 bg-blue-600 rounded-full shadow-lg">
@@ -122,7 +122,7 @@ const Register = () => {
                             {error}
                         </div>
                     )}
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div>
                             <label className="block mb-1 text-sm font-semibold text-slate-700">First Name</label>
                             <input

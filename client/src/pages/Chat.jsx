@@ -196,12 +196,14 @@ const Chat = () => {
         navigate('/login');
     };
 
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
     return (
         <div className={`flex h-screen overflow-hidden bg-slate-50 ${isAdmin ? 'flex-col' : ''}`}>
             {isAdmin ? (
-                <nav className="px-6 py-3 bg-white border-b border-slate-200 shrink-0">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-6">
+                <nav className="px-4 py-3 bg-white border-b sm:px-6 border-slate-200 shrink-0">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                        <div className="flex flex-wrap items-center gap-4 sm:gap-6">
                             <div className="flex items-center gap-3">
                                 <div className="flex items-center justify-center w-10 h-10 bg-blue-600 rounded-full shadow-lg shadow-blue-600/20">
                                     <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -209,131 +211,165 @@ const Chat = () => {
                                     </svg>
                                 </div>
                                 <span className="font-semibold text-slate-800">InfoCenter AI</span>
-                                <span className="px-2 py-1 text-xs font-medium text-blue-700 border border-blue-100 rounded bg-blue-50">Admin</span>
+                                <button
+                                    onClick={handleLogout}
+                                    className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 sm:hidden"
+                                    aria-label="Log out"
+                                >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                    </svg>
+                                    Logout
+                                </button>
                             </div>
-                            <div className="flex items-center gap-1">
+                            <div className="flex flex-wrap items-center gap-1">
                                 <Link to="/admin" className="px-4 py-2 text-sm font-medium transition-colors rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100">Dashboard</Link>
                                 <Link to="/admin/requests" className="px-4 py-2 text-sm font-medium transition-colors rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100">Requests</Link>
                                 <span className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow-sm">Chat</span>
                             </div>
                         </div>
-                        <div className="flex items-center gap-3">
-                            <div className="flex items-center justify-center w-8 h-8 text-sm font-medium rounded-full bg-slate-200 text-slate-600">
+                        <div className="flex items-center gap-2 sm:gap-3">
+                            <div className="items-center justify-center hidden w-8 h-8 text-sm font-medium rounded-full sm:flex bg-slate-200 text-slate-600">
                                 {localStorage.getItem('firstName')?.[0] || 'A'}
                             </div>
-                            <div>
+                            <div className="hidden sm:block">
                                 <p className="text-sm font-medium text-slate-700">
                                     {localStorage.getItem('firstName')} {localStorage.getItem('lastName')}
                                 </p>
                             </div>
-                            <button onClick={handleLogout} className="ml-2 transition-colors text-slate-400 hover:text-slate-600">
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <button
+                                onClick={handleLogout}
+                                className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 sm:text-sm"
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                                 </svg>
+                                <span className="hidden sm:inline">Log out</span>
                             </button>
                         </div>
                     </div>
                 </nav>
             ) : (
                 /* Sidebar */
-                <div className="flex flex-col w-64 bg-white border-r border-slate-200">
-                    {/* Sidebar Header */}
-                    <div className="p-4 border-b border-slate-200">
-                        <div className="flex items-center gap-3 mb-4">
-                            <div className="flex items-center justify-center w-10 h-10 bg-blue-600 rounded-full shadow-lg shadow-blue-600/20">
-                                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
-                                </svg>
-                            </div>
-                            <span className="font-semibold text-slate-800">InfoCenter AI</span>
-                        </div>
-                        <button
-                            onClick={createConversation}
-                            className="w-full py-2.5 px-4 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 shadow-sm font-medium"
-                        >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path>
-                            </svg>
-                            New Chat
-                        </button>
-                        <Link to="/requests" className="flex items-center gap-3 px-3 py-2 mt-2 transition-colors rounded-lg text-slate-600 hover:bg-slate-50 hover:text-slate-900">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                            <span className="text-sm font-medium">My Requests</span>
-                        </Link>
-                        {localStorage.getItem('role') === 'ADMIN' && (
-                            <Link to="/admin" className="flex items-center gap-3 px-3 py-2 mt-1 transition-colors rounded-lg text-slate-600 hover:bg-slate-50 hover:text-slate-900">
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
-                                </svg>
-                                <span className="text-sm font-medium">Dashboard</span>
-                            </Link>
-                        )}
-                    </div>
-
-                    {/* Conversation List */}
-                    <div className="flex-1 px-3 py-1 space-y-1 overflow-y-auto">
-                        {loading ? (
-                            <div className="mt-4 text-sm text-center text-slate-400">Loading...</div>
-                        ) : conversations.map(conv => (
-                            <div
-                                key={conv.id}
-                                onClick={() => setActiveConversationId(conv.id)}
-                                className={`p-3 rounded-lg cursor-pointer flex items-center justify-between group transition-colors ${activeConversationId === conv.id
-                                    ? 'bg-blue-50 text-blue-700'
-                                    : 'hover:bg-slate-100 text-slate-700'
-                                    }`}
-                            >
-                                <div className="flex items-center gap-3 overflow-hidden">
-                                    <svg className={`w-5 h-5 shrink-0 ${activeConversationId === conv.id ? 'text-blue-600' : 'text-slate-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+                <>
+                    {isSidebarOpen && (
+                        <div
+                            className="fixed inset-0 z-40 bg-black/40 sm:hidden"
+                            onClick={() => setIsSidebarOpen(false)}
+                        />
+                    )}
+                    <div className={`fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-slate-200 transform transition-transform sm:static sm:translate-x-0 sm:w-64 flex flex-col ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+                        {/* Sidebar Header */}
+                        <div className="p-4 border-b border-slate-200">
+                            <div className="flex items-center justify-between gap-3 mb-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="flex items-center justify-center w-10 h-10 bg-blue-600 rounded-full shadow-lg shadow-blue-600/20">
+                                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+                                        </svg>
+                                    </div>
+                                    <span className="font-semibold text-slate-800">InfoCenter AI</span>
+                                </div>
+                                <button
+                                    onClick={() => setIsSidebarOpen(false)}
+                                    className="p-2 rounded-lg text-slate-500 hover:bg-slate-100 sm:hidden"
+                                    aria-label="Close sidebar"
+                                >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
                                     </svg>
-                                    <span className="text-sm font-medium truncate">{conv.title}</span>
-                                </div>
-
-                                {/* Action Buttons (Visible on Hover) */}
-                                <div className="items-center hidden gap-1 group-hover:flex">
-                                    <button
-                                        onClick={(e) => renameConversation(conv.id, conv.title, e)}
-                                        className="p-1 rounded hover:bg-slate-200 text-slate-500"
-                                        title="Rename"
-                                    >
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
-                                        </svg>
-                                    </button>
-                                    <button
-                                        onClick={(e) => deleteConversation(conv.id, e)}
-                                        className="p-1 text-red-500 rounded hover:bg-red-100"
-                                        title="Delete"
-                                    >
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                        </svg>
-                                    </button>
-                                </div>
+                                </button>
                             </div>
-                        ))}
-                    </div>
-
-                    {/* User Profile / Logout */}
-                    <div className="p-4 border-t border-slate-200">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="flex items-center justify-center w-8 h-8 text-sm font-bold text-blue-600 bg-blue-100 rounded-full">
-                                    {localStorage.getItem('firstName')?.[0] || 'U'}
-                                </div>
-                                <div className="text-sm font-medium text-slate-700">
-                                    {localStorage.getItem('firstName')}
-                                </div>
-                            </div>
-                            <button onClick={handleLogout} className="text-xs text-slate-500 hover:text-slate-800">
-                                Sign Out
+                            <button
+                                onClick={createConversation}
+                                className="w-full py-2.5 px-4 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 shadow-sm font-medium"
+                            >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path>
+                                </svg>
+                                New Chat
                             </button>
+                            {localStorage.getItem('role') !== 'ADMIN' && (
+                                <Link to="/requests" className="flex items-center gap-3 px-3 py-2 mt-2 transition-colors rounded-lg text-slate-600 hover:bg-slate-50 hover:text-slate-900">
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                    <span className="text-sm font-medium">My Requests</span>
+                                </Link>
+                            )}
+                            {localStorage.getItem('role') === 'ADMIN' && (
+                                <Link to="/admin" className="flex items-center gap-3 px-3 py-2 mt-1 transition-colors rounded-lg text-slate-600 hover:bg-slate-50 hover:text-slate-900">
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                                    </svg>
+                                    <span className="text-sm font-medium">Dashboard</span>
+                                </Link>
+                            )}
+                        </div>
+
+                        {/* Conversation List */}
+                        <div className="flex-1 px-3 py-1 space-y-1 overflow-y-auto">
+                            {loading ? (
+                                <div className="mt-4 text-sm text-center text-slate-400">Loading...</div>
+                            ) : conversations.map(conv => (
+                                <div
+                                    key={conv.id}
+                                    onClick={() => setActiveConversationId(conv.id)}
+                                    className={`p-3 rounded-lg cursor-pointer flex items-center justify-between group transition-colors ${activeConversationId === conv.id
+                                        ? 'bg-blue-50 text-blue-700'
+                                        : 'hover:bg-slate-100 text-slate-700'
+                                        }`}
+                                >
+                                    <div className="flex items-center gap-3 overflow-hidden">
+                                        <svg className={`w-5 h-5 shrink-0 ${activeConversationId === conv.id ? 'text-blue-600' : 'text-slate-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+                                        </svg>
+                                        <span className="text-sm font-medium truncate">{conv.title}</span>
+                                    </div>
+
+                                    {/* Action Buttons (Always visible on mobile, hover on desktop) */}
+                                    <div className="flex items-center gap-1 sm:hidden sm:group-hover:flex">
+                                        <button
+                                            onClick={(e) => renameConversation(conv.id, conv.title, e)}
+                                            className="p-1 rounded hover:bg-slate-200 text-slate-500"
+                                            title="Rename"
+                                        >
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                                            </svg>
+                                        </button>
+                                        <button
+                                            onClick={(e) => deleteConversation(conv.id, e)}
+                                            className="p-1 text-red-500 rounded hover:bg-red-100"
+                                            title="Delete"
+                                        >
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* User Profile / Logout */}
+                        <div className="p-4 border-t border-slate-200">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="flex items-center justify-center w-8 h-8 text-sm font-bold text-blue-600 bg-blue-100 rounded-full">
+                                        {localStorage.getItem('firstName')?.[0] || 'U'}
+                                    </div>
+                                    <div className="text-sm font-medium text-slate-700">
+                                        {localStorage.getItem('firstName')}
+                                    </div>
+                                </div>
+                                <button onClick={handleLogout} className="text-xs text-slate-500 hover:text-slate-800">
+                                    Sign Out
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </>
             )}
 
             {/* Main Chat Area */}
@@ -341,17 +377,30 @@ const Chat = () => {
                 {activeConversationId ? (
                     <>
                         {/* Chat Header */}
-                        <header className="flex items-center justify-between px-6 py-4 bg-white border-b border-slate-200">
-                            <div>
-                                <h2 className="font-semibold text-slate-800">
-                                    {conversations.find(c => c.id === activeConversationId)?.title || location.state?.title || 'Chat'}
-                                </h2>
-                                <p className="text-xs text-slate-500">InfoCenter AI • {messages.length} messages</p>
+                        <header className="flex items-center justify-between px-4 py-4 bg-white border-b sm:px-6 border-slate-200">
+                            <div className="flex items-center gap-3">
+                                {!isAdmin && (
+                                    <button
+                                        onClick={() => setIsSidebarOpen(true)}
+                                        className="p-2 bg-white border rounded-lg shadow-sm text-slate-600 sm:hidden border-slate-200"
+                                        aria-label="Open sidebar"
+                                    >
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                                        </svg>
+                                    </button>
+                                )}
+                                <div>
+                                    <h2 className="font-semibold text-slate-800">
+                                        {conversations.find(c => c.id === activeConversationId)?.title || location.state?.title || 'Chat'}
+                                    </h2>
+                                    <p className="text-xs text-slate-500">InfoCenter AI • {messages.length} messages</p>
+                                </div>
                             </div>
                         </header>
 
                         {/* Messages Area */}
-                        <div className="flex-1 p-6 space-y-6 overflow-y-auto">
+                        <div className="flex-1 p-1 space-y-6 overflow-y-auto sm:p-6">
                             {messages.map((msg) => {
                                 const isUser = msg.role === 'user';
                                 const isReadOnly = isAdmin;
@@ -360,8 +409,11 @@ const Chat = () => {
                                 const displayInitial = isUser ? (isReadOnly && chatUser ? chatUser.firstName?.[0] : localStorage.getItem('firstName')?.[0]) : null;
 
                                 return (
-                                    <div key={msg.id} className={`flex max-w-3xl gap-4 mx-auto ${isUser ? 'flex-row-reverse' : ''}`}>
-                                        <div className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center text-sm font-medium ${isUser ? 'bg-slate-200 text-slate-600' : 'bg-blue-600 text-white shadow-md'
+                                    <div
+                                        key={msg.id}
+                                        className={`flex max-w-3xl gap-4 mx-auto px-0 sm:px-0 justify-center ${isUser ? 'sm:flex-row-reverse sm:justify-end' : 'sm:justify-start'}`}
+                                    >
+                                        <div className={`w-8 h-8 rounded-full shrink-0 hidden sm:flex items-center justify-center text-sm font-medium ${isUser ? 'bg-slate-200 text-slate-600' : 'bg-blue-600 text-white shadow-md'
                                             }`}>
                                             {isUser ? (
                                                 displayInitial || 'U'
@@ -371,8 +423,8 @@ const Chat = () => {
                                                 </svg>
                                             )}
                                         </div>
-                                        <div className={`flex-1 ${isUser ? 'text-right' : ''}`}>
-                                            <div className={`flex items-center gap-2 mb-1 ${isUser ? 'justify-end' : ''}`}>
+                                        <div className={`w-full sm:flex-1 text-left ${isUser ? 'text-right' : ''}`}>
+                                            <div className={`flex gap-2 px-4 sm:px-0 items-center mb-1 ${isUser ? 'justify-end' : 'justify-start'}`}>
                                                 <span className="font-semibold text-slate-900">
                                                     {displayName}
                                                 </span>
@@ -380,7 +432,9 @@ const Chat = () => {
                                                     {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                                 </span>
                                             </div>
-                                            <div className={`leading-relaxed text-slate-800 ${msg.role === 'assistant' ? 'prose prose-sm max-w-none' : 'whitespace-pre-wrap'}`}>
+                                            <div
+                                                className={`leading-relaxed text-slate-800 inline-block mx-auto sm:mx-0 max-w-[85%] sm:max-w-none ${msg.role === 'assistant' ? 'prose prose-sm max-w-none' : 'whitespace-pre-wrap'} ${isUser ? 'bg-slate-50' : ''} rounded-xl px-4 py-2 sm:bg-transparent sm:px-0 sm:py-0`}
+                                            >
                                                 {msg.role === 'assistant' ? (
                                                     <ReactMarkdown>{msg.content}</ReactMarkdown>
                                                 ) : (
@@ -392,14 +446,14 @@ const Chat = () => {
                                 );
                             })}
                             {isSending && (
-                                <div className="flex max-w-3xl gap-4 mx-auto opacity-50">
-                                    <div className="flex items-center justify-center w-8 h-8 bg-blue-600 rounded-full shadow-md shrink-0">
+                                <div className="flex justify-center max-w-3xl gap-4 mx-auto opacity-50 sm:justify-start">
+                                    <div className="items-center justify-center hidden w-8 h-8 bg-blue-600 rounded-full shadow-md sm:flex shrink-0">
                                         <svg className="w-5 h-5 text-white animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
                                         </svg>
                                     </div>
-                                    <div className="flex-1">
-                                        <div className="flex items-center gap-2 mb-1">
+                                    <div className="w-full px-3 text-left sm:flex-1">
+                                        <div className="flex items-center justify-start gap-2 mb-1">
                                             <span className="font-semibold text-slate-900">InfoCenter AI</span>
                                         </div>
                                         <div className="italic text-slate-500">Thinking...</div>
@@ -410,7 +464,7 @@ const Chat = () => {
                         </div>
 
                         {/* Input Area */}
-                        <div className="p-6 bg-white border-t border-slate-200">
+                        <div className="p-4 bg-white border-t sm:p-6 border-slate-200">
                             <form onSubmit={handleSendMessage} className="relative max-w-3xl mx-auto">
                                 <textarea
                                     value={inputMessage}
@@ -421,8 +475,8 @@ const Chat = () => {
                                             handleSendMessage(e);
                                         }
                                     }}
-                                    placeholder={isAdmin ? "Read-only view" : "Ask anything about campus policies, schedules, or services..."}
-                                    className="w-full pl-4 pr-12 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white resize-none shadow-sm disabled:bg-slate-100 disabled:text-slate-400"
+                                    placeholder={isAdmin ? "Read-only view" : "Ask anything about the university"}
+                                    className="w-full pl-4 pr-12 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white resize-none shadow-sm disabled:bg-slate-100 disabled:text-slate-400 text-[14px] sm:text-base leading-5 min-h-12 sm:min-h-12 placeholder:text-slate-400"
                                     rows="1"
                                     disabled={isSending || isAdmin}
                                 ></textarea>
@@ -442,7 +496,18 @@ const Chat = () => {
                         </div>
                     </>
                 ) : (
-                    <div className="flex flex-col items-center justify-center flex-1 text-slate-400">
+                    <div className="relative flex flex-col items-center justify-center flex-1 text-slate-400">
+                        {!isAdmin && (
+                            <button
+                                onClick={() => setIsSidebarOpen(true)}
+                                className="fixed p-2 bg-white border rounded-lg shadow-sm text-slate-600 left-4 top-4 sm:hidden border-slate-200"
+                                aria-label="Open sidebar"
+                            >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                                </svg>
+                            </button>
+                        )}
                         <div className="flex items-center justify-center w-16 h-16 mb-4 rounded-full bg-slate-100">
                             <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>

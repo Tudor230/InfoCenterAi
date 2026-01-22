@@ -93,9 +93,9 @@ const AdminDashboard = () => {
     return (
         <div className="min-h-screen bg-slate-50 text-slate-900">
             {/* Top Navigation */}
-            <nav className="px-6 py-3 bg-white border-b border-slate-200">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-6">
+            <nav className="px-4 py-3 bg-white border-b sm:px-6 border-slate-200">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                    <div className="flex flex-wrap items-center gap-4 sm:gap-6">
                         <div className="flex items-center gap-3">
                             <div className="flex items-center justify-center w-10 h-10 bg-blue-600 rounded-full shadow-lg shadow-blue-600/20">
                                 <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -103,25 +103,37 @@ const AdminDashboard = () => {
                                 </svg>
                             </div>
                             <span className="font-semibold text-slate-800">InfoCenter AI</span>
-                            <span className="px-2 py-1 text-xs font-medium text-blue-700 border border-blue-100 rounded bg-blue-50">Admin</span>
+                            <button
+                                onClick={handleLogout}
+                                className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 sm:hidden"
+                                aria-label="Log out"
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                </svg>
+                                Logout
+                            </button>
                         </div>
-                        <div className="flex items-center gap-1">
+                        <div className="flex flex-wrap items-center gap-1">
                             <Link to="/admin" className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow-sm">Dashboard</Link>
                             <Link to="/admin/requests" className="px-4 py-2 text-sm font-medium transition-colors rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100">Requests</Link>
                             <Link to="/" className="px-4 py-2 text-sm font-medium transition-colors rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100">Chat</Link>
                         </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                        <div className="flex items-center justify-center w-8 h-8 text-sm font-medium rounded-full bg-slate-200 text-slate-600">
+                    <div className="flex items-center gap-2 sm:gap-3">
+                        <div className="items-center justify-center hidden w-8 h-8 text-sm font-medium rounded-full sm:flex bg-slate-200 text-slate-600">
                             {localStorage.getItem('firstName')?.[0] || 'A'}
                         </div>
-                        <div>
+                        <div className="hidden sm:block">
                             <p className="text-sm font-medium text-slate-700">
                                 {localStorage.getItem('firstName')} {localStorage.getItem('lastName')}
                             </p>
                         </div>
-                        <button onClick={handleLogout} className="ml-2 transition-colors text-slate-400 hover:text-slate-600">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button
+                            onClick={handleLogout}
+                            className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 sm:text-sm"
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                             </svg>
                         </button>
@@ -130,9 +142,9 @@ const AdminDashboard = () => {
             </nav>
 
             {/* Main Content */}
-            <main className="p-6">
+            <main className="p-4 sm:p-6">
                 {/* Stats Cards */}
-                <div className="grid grid-cols-3 gap-6 mb-6">
+                <div className="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-2 lg:grid-cols-3">
                     <div className="p-5 bg-white border shadow-sm rounded-xl border-slate-200">
                         <p className="mb-1 text-sm text-slate-500">Total Inquiries</p>
                         <p className="text-2xl font-bold text-slate-900">{inquiries.length}</p>
@@ -149,9 +161,9 @@ const AdminDashboard = () => {
                     </div>
                 </div>
 
-                <div className="grid items-start grid-cols-3 gap-6">
+                <div className="grid items-start grid-cols-1 gap-6 lg:grid-cols-3">
                     {/* Conversations Table */}
-                    <div className="col-span-2 bg-white border shadow-sm rounded-xl border-slate-200">
+                    <div className="bg-white border shadow-sm lg:col-span-2 rounded-xl border-slate-200">
                         <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200">
                             <h2 className="font-semibold text-slate-800">Recent Inquiries</h2>
                             <div className="flex items-center gap-2">
@@ -160,11 +172,62 @@ const AdminDashboard = () => {
                                     placeholder="Search inquiries..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="px-3 py-1.5 text-sm bg-slate-50 border border-slate-200 text-slate-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                                    className="px-3 py-1.5 text-sm bg-slate-50 border border-slate-200 text-slate-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 w-40 sm:w-64"
                                 />
                             </div>
                         </div>
-                        <div className="overflow-x-auto">
+                        {/* Mobile cards */}
+                        <div className="divide-y divide-slate-200 sm:hidden">
+                            {inquiries.filter(inquiry => {
+                                const searchLower = searchQuery.toLowerCase();
+                                const firstName = inquiry.user?.firstName?.toLowerCase() || '';
+                                const lastName = inquiry.user?.lastName?.toLowerCase() || '';
+                                const title = inquiry.title?.toLowerCase() || '';
+                                return firstName.includes(searchLower) ||
+                                    lastName.includes(searchLower) ||
+                                    title.includes(searchLower);
+                            }).length === 0 ? (
+                                <div className="p-4 text-sm text-center text-slate-500">No recent inquiries found.</div>
+                            ) : (
+                                inquiries.filter(inquiry => {
+                                    const searchLower = searchQuery.toLowerCase();
+                                    const firstName = inquiry.user?.firstName?.toLowerCase() || '';
+                                    const lastName = inquiry.user?.lastName?.toLowerCase() || '';
+                                    const title = inquiry.title?.toLowerCase() || '';
+                                    return firstName.includes(searchLower) ||
+                                        lastName.includes(searchLower) ||
+                                        title.includes(searchLower);
+                                }).sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
+                                    .map((inquiry) => (
+                                        <div
+                                            key={inquiry.id}
+                                            className="p-4 cursor-pointer hover:bg-slate-50"
+                                            onClick={() => navigate(`/admin/chat/${inquiry.id}`, { state: { user: inquiry.user, title: inquiry.title } })}
+                                        >
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="flex items-center justify-center w-8 h-8 text-xs font-medium text-blue-700 bg-blue-100 rounded-full">
+                                                        {inquiry.user?.firstName?.[0] || inquiry.user?.email?.[0] || 'U'}
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-sm font-medium text-slate-900">
+                                                            {inquiry.user?.firstName} {inquiry.user?.lastName}
+                                                        </p>
+                                                        <p className="text-xs text-slate-500">{inquiry.title || 'No Topic'}</p>
+                                                    </div>
+                                                </div>
+                                                <span className="text-xs text-slate-500">{inquiry.messageCount || 0} msgs</span>
+                                            </div>
+                                            <div className="mt-2 text-xs text-slate-500">
+                                                {new Date(inquiry.updatedAt).toLocaleString()}
+                                            </div>
+                                        </div>
+                                    ))
+                            )}
+                        </div>
+
+                        {/* Desktop table */}
+                        <div className="hidden overflow-x-auto sm:block">
                             <table className="w-full">
                                 <thead className="text-left bg-slate-50">
                                     <tr>

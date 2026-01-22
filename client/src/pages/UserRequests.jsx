@@ -6,6 +6,7 @@ const UserRequests = () => {
     const [requests, setRequests] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [formData, setFormData] = useState({
         documentType: 'Academic Transcript',
         purpose: '',
@@ -128,18 +129,44 @@ const UserRequests = () => {
     };
 
     return (
-        <div className="flex min-h-screen text-slate-900 bg-slate-50">
+        <div className="flex h-screen overflow-hidden text-slate-900 bg-slate-50">
             {/* Sidebar */}
-            <div className="flex flex-col w-64 bg-white border-r border-slate-200">
+            <button
+                onClick={() => setIsSidebarOpen(true)}
+                className="absolute z-40 p-2 bg-white border rounded-lg shadow-sm text-slate-600 left-4 top-4 sm:hidden border-slate-200"
+                aria-label="Open sidebar"
+            >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+            {isSidebarOpen && (
+                <div
+                    className="fixed inset-0 z-40 bg-black/40 sm:hidden"
+                    onClick={() => setIsSidebarOpen(false)}
+                />
+            )}
+            <div className={`fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-slate-200 transform transition-transform sm:static sm:translate-x-0 sm:w-64 flex flex-col ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 {/* Sidebar Header */}
                 <div className="p-4 border-b border-slate-200">
-                    <div className="flex items-center gap-3 mb-4">
-                        <div className="flex items-center justify-center w-10 h-10 bg-blue-600 rounded-full shadow-lg shadow-blue-600/20">
-                            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
-                            </svg>
+                    <div className="flex items-center justify-between gap-3 mb-4">
+                        <div className="flex items-center gap-3">
+                            <div className="flex items-center justify-center w-10 h-10 bg-blue-600 rounded-full shadow-lg shadow-blue-600/20">
+                                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+                                </svg>
+                            </div>
+                            <span className="font-semibold text-slate-800">InfoCenter AI</span>
                         </div>
-                        <span className="font-semibold text-slate-800">InfoCenter AI</span>
+                        <button
+                            onClick={() => setIsSidebarOpen(false)}
+                            className="p-2 rounded-lg text-slate-500 hover:bg-slate-100 sm:hidden"
+                            aria-label="Close sidebar"
+                        >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
                     </div>
                     <button
                         onClick={() => setIsModalOpen(true)}
@@ -171,7 +198,7 @@ const UserRequests = () => {
                 </div>
 
                 {/* User Profile / Logout */}
-                <div className="p-4 border-t border-slate-200">
+                <div className="p-4 mt-auto border-t border-slate-200">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <div className="flex items-center justify-center w-8 h-8 text-sm font-bold text-blue-600 bg-blue-100 rounded-full">
@@ -189,79 +216,129 @@ const UserRequests = () => {
             </div>
 
             {/* Main Content Area */}
-            <main className="flex flex-col flex-1 p-8 bg-slate-50">
-                <div className="w-full max-w-5xl mx-auto">
-                    <div className="flex items-center justify-between mb-8">
+            <main className="flex flex-col flex-1 p-4 pt-12 overflow-y-auto sm:p-8 sm:pt-8 bg-slate-50">
+                <div className="w-full max-w-lg mx-auto sm:max-w-5xl">
+                    <div className="flex flex-col gap-2 mb-5 sm:flex-row sm:items-center sm:justify-between">
                         <div>
-                            <h1 className="text-2xl font-bold text-slate-900">My Document Requests</h1>
-                            <p className="mt-1 text-slate-500">Track the status of your official document requests</p>
+                            <h1 className="text-xl font-semibold text-slate-900 sm:text-2xl">My Document Requests</h1>
+                            <p className="mt-1 text-sm text-slate-500 sm:text-base">Track the status of your official document requests</p>
                         </div>
                     </div>
 
                     {/* Requests List */}
                     <div className="overflow-hidden bg-white border shadow-sm border-slate-200 rounded-xl">
-                        <table className="w-full text-left">
-                            <thead className="border-b bg-slate-50 border-slate-200">
-                                <tr>
-                                    <th className="px-6 py-4 text-xs font-semibold tracking-wider uppercase text-slate-500">Request ID</th>
-                                    <th className="px-6 py-4 text-xs font-semibold tracking-wider uppercase text-slate-500">Document Type</th>
-                                    <th className="px-6 py-4 text-xs font-semibold tracking-wider uppercase text-slate-500">Date Requested</th>
-                                    <th className="px-6 py-4 text-xs font-semibold tracking-wider uppercase text-slate-500">Status</th>
-                                    <th className="px-6 py-4 text-xs font-semibold tracking-wider text-right uppercase text-slate-500">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-200">
-                                {loading ? (
+                        {/* Mobile cards */}
+                        <div className="divide-y divide-slate-200 sm:hidden">
+                            {loading ? (
+                                <div className="p-4 text-center text-slate-500">Loading requests...</div>
+                            ) : requests.length === 0 ? (
+                                <div className="p-4 text-center text-slate-500">No requests found. Create one to get started.</div>
+                            ) : (
+                                requests.map((req) => (
+                                    <div key={req.id} className="p-4">
+                                        <div className="flex items-center justify-between">
+                                            <div className="text-sm font-semibold text-slate-900">#{req.id}</div>
+                                            <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${req.status === 'COMPLETED' ? 'bg-green-100 text-green-800' :
+                                                req.status === 'REJECTED' || req.status === 'CANCELLED' ? 'bg-red-100 text-red-800' :
+                                                    'bg-yellow-100 text-yellow-800'
+                                                }`}>
+                                                {req.status}
+                                            </span>
+                                        </div>
+                                        <div className="mt-2 text-sm text-slate-700">{req.documentType}</div>
+                                        <div className="mt-1 text-xs text-slate-500">
+                                            {new Date(req.createdAt).toLocaleDateString()}
+                                        </div>
+                                        <div className="flex items-center gap-3 mt-3">
+                                            {req.status === 'PENDING' && (
+                                                <button
+                                                    onClick={() => handleCancelRequest(req.id)}
+                                                    className="text-xs font-medium text-red-600 hover:text-red-800"
+                                                >
+                                                    Cancel
+                                                </button>
+                                            )}
+                                            {req.status === 'COMPLETED' && req.driveFileId ? (
+                                                <button
+                                                    onClick={() => handleDownload(req.driveFileId, `${req.documentType}.pdf`)}
+                                                    className="text-xs font-medium text-blue-600 hover:text-blue-800"
+                                                >
+                                                    Download
+                                                </button>
+                                            ) : (
+                                                <span className="text-xs font-medium cursor-not-allowed text-slate-400">Download</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+
+                        {/* Desktop table */}
+                        <div className="hidden overflow-x-auto sm:block">
+                            <table className="w-full text-left">
+                                <thead className="border-b bg-slate-50 border-slate-200">
                                     <tr>
-                                        <td colSpan="5" className="px-6 py-4 text-center text-slate-500">Loading requests...</td>
+                                        <th className="px-6 py-4 text-xs font-semibold tracking-wider uppercase text-slate-500">Request ID</th>
+                                        <th className="px-6 py-4 text-xs font-semibold tracking-wider uppercase text-slate-500">Document Type</th>
+                                        <th className="px-6 py-4 text-xs font-semibold tracking-wider uppercase text-slate-500">Date Requested</th>
+                                        <th className="px-6 py-4 text-xs font-semibold tracking-wider uppercase text-slate-500">Status</th>
+                                        <th className="px-6 py-4 text-xs font-semibold tracking-wider text-right uppercase text-slate-500">Actions</th>
                                     </tr>
-                                ) : requests.length === 0 ? (
-                                    <tr>
-                                        <td colSpan="5" className="px-6 py-4 text-center text-slate-500">No requests found. Create one to get started.</td>
-                                    </tr>
-                                ) : (
-                                    requests.map((req) => (
-                                        <tr key={req.id} className="transition-colors hover:bg-slate-50">
-                                            <td className="px-6 py-4 text-sm font-medium text-slate-900">#{req.id}</td>
-                                            <td className="px-6 py-4 text-sm text-slate-700">{req.documentType}</td>
-                                            <td className="px-6 py-4 text-sm text-slate-500">
-                                                {new Date(req.createdAt).toLocaleDateString()}
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${req.status === 'COMPLETED' ? 'bg-green-100 text-green-800' :
-                                                    req.status === 'REJECTED' || req.status === 'CANCELLED' ? 'bg-red-100 text-red-800' :
-                                                        'bg-yellow-100 text-yellow-800'
-                                                    }`}>
-                                                    {req.status}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4 text-right">
-                                                <div className="flex items-center justify-end gap-3">
-                                                    {req.status === 'PENDING' && (
-                                                        <button
-                                                            onClick={() => handleCancelRequest(req.id)}
-                                                            className="text-sm font-medium text-red-600 hover:text-red-800"
-                                                        >
-                                                            Cancel
-                                                        </button>
-                                                    )}
-                                                    {req.status === 'COMPLETED' && req.driveFileId ? (
-                                                        <button
-                                                            onClick={() => handleDownload(req.driveFileId, `${req.documentType}.pdf`)}
-                                                            className="text-sm font-medium text-blue-600 hover:text-blue-800"
-                                                        >
-                                                            Download
-                                                        </button>
-                                                    ) : (
-                                                        <span className="text-sm font-medium cursor-not-allowed text-slate-400">Download</span>
-                                                    )}
-                                                </div>
-                                            </td>
+                                </thead>
+                                <tbody className="divide-y divide-slate-200">
+                                    {loading ? (
+                                        <tr>
+                                            <td colSpan="5" className="px-6 py-4 text-center text-slate-500">Loading requests...</td>
                                         </tr>
-                                    ))
-                                )}
-                            </tbody>
-                        </table>
+                                    ) : requests.length === 0 ? (
+                                        <tr>
+                                            <td colSpan="5" className="px-6 py-4 text-center text-slate-500">No requests found. Create one to get started.</td>
+                                        </tr>
+                                    ) : (
+                                        requests.map((req) => (
+                                            <tr key={req.id} className="transition-colors hover:bg-slate-50">
+                                                <td className="px-6 py-4 text-sm font-medium text-slate-900">#{req.id}</td>
+                                                <td className="px-6 py-4 text-sm text-slate-700">{req.documentType}</td>
+                                                <td className="px-6 py-4 text-sm text-slate-500">
+                                                    {new Date(req.createdAt).toLocaleDateString()}
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${req.status === 'COMPLETED' ? 'bg-green-100 text-green-800' :
+                                                        req.status === 'REJECTED' || req.status === 'CANCELLED' ? 'bg-red-100 text-red-800' :
+                                                            'bg-yellow-100 text-yellow-800'
+                                                        }`}>
+                                                        {req.status}
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4 text-right">
+                                                    <div className="flex items-center justify-end gap-3">
+                                                        {req.status === 'PENDING' && (
+                                                            <button
+                                                                onClick={() => handleCancelRequest(req.id)}
+                                                                className="text-sm font-medium text-red-600 hover:text-red-800"
+                                                            >
+                                                                Cancel
+                                                            </button>
+                                                        )}
+                                                        {req.status === 'COMPLETED' && req.driveFileId ? (
+                                                            <button
+                                                                onClick={() => handleDownload(req.driveFileId, `${req.documentType}.pdf`)}
+                                                                className="text-sm font-medium text-blue-600 hover:text-blue-800"
+                                                            >
+                                                                Download
+                                                            </button>
+                                                        ) : (
+                                                            <span className="text-sm font-medium cursor-not-allowed text-slate-400">Download</span>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </main>
@@ -269,7 +346,7 @@ const UserRequests = () => {
             {/* New Request Modal */}
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-                    <div className="w-full max-w-lg p-6 bg-white shadow-xl rounded-2xl">
+                    <div className="w-full max-w-lg p-6 mx-4 bg-white shadow-xl rounded-2xl">
                         <div className="flex items-center justify-between mb-6">
                             <h2 className="text-xl font-bold text-slate-900">New Document Request</h2>
                             <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600">
