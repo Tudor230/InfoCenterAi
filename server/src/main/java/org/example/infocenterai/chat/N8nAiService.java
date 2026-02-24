@@ -1,5 +1,6 @@
 package org.example.infocenterai.chat;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -15,14 +16,16 @@ import java.util.Map;
 public class N8nAiService implements AiService {
 
     private final RestTemplate restTemplate;
+    private final String webhookUrl;
 
-    public N8nAiService() {
+    public N8nAiService(@Value("${n8n.ai.webhook-url}") String webhookUrl) {
         this.restTemplate = new RestTemplate();
+        this.webhookUrl = webhookUrl;
     }
 
     @Override
     public String generateResponse(String userMessage) {
-        String url = "https://n8n-service-scmr.onrender.com/webhook/message";
+        String url = webhookUrl;
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -46,4 +49,3 @@ public class N8nAiService implements AiService {
         return "Sorry, I couldn't get a valid response from the AI.";
     }
 }
-

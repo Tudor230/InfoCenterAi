@@ -74,6 +74,7 @@ Set these environment variables before running backend:
 - `JWT_SECRET_KEY` (optional override)
 - `GOOGLE_CREDENTIALS_BASE64` (**required**)
 - `GOOGLE_REFRESH_TOKEN` (**required**)
+- `N8N_AI_WEBHOOK_URL` (optional override, default: `https://n8n-service-scmr.onrender.com/webhook/message`)
 
 ### Run backend
 
